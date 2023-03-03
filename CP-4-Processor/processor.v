@@ -115,15 +115,17 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
+    wire [31:0] Imm_SE_X;
+    sign_extender_17 SE_X(.extended(Imm_SE_X), .in_17(IR_X[16:0]));
     alu ALU(
         .data_operandA(A_X), 
-        .data_operandB(X_i_type ? IR_X[16:0] : B_X), 
+        .data_operandB(X_i_type ? Imm_SE_X : B_X), 
         .ctrl_ALUopcode(X_i_type ? 5'b0 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out)
     );
-    wire [16:0] GTK_X_IMM;
-    assign GTK_X_IMM = IR_X[16:0];
+    // wire [16:0] GTK_X_IMM;
+    // assign GTK_X_IMM = IR_X[16:0];
 
     // XM Latch
     wire [31:0] O_M, B_M, IR_M;
