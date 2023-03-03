@@ -1,0 +1,87 @@
+[*]
+[*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
+[*] Fri Feb 10 13:31:00 2023
+[*]
+[dumpfile] "/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/CP 3/multsuperbasic.vcd"
+[dumpfile_mtime] "Fri Feb 10 01:32:09 2023"
+[dumpfile_size] 47599
+[savefile] "/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/CP 3/MultWaveforms.gtkw"
+[timestart] 0
+[size] 1680 1050
+[pos] -1 -1
+*-17.555319 496900 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] multdiv_tb.
+[treeopen] multdiv_tb.tester.
+[treeopen] multdiv_tb.tester.MultiplicandRegister.Register.loop1[30].
+[treeopen] multdiv_tb.tester.MultiplicandRegister.Register.loop1[31].
+[sst_width] 193
+[signals_width] 552
+[sst_expanded] 1
+[sst_vpaned_height] 376
+@28
+multdiv_tb.clock
+@24
+multdiv_tb.tester.count[4:0]
+@28
+multdiv_tb.ctrl_Mult
+multdiv_tb.ready
+@420
+multdiv_tb.tester.data_operandA[31:0]
+multdiv_tb.tester.data_operandB[31:0]
+@c00028
+multdiv_tb.tester.multiplicand_out[31:0]
+@28
+(0)multdiv_tb.tester.multiplicand_out[31:0]
+(1)multdiv_tb.tester.multiplicand_out[31:0]
+(2)multdiv_tb.tester.multiplicand_out[31:0]
+(3)multdiv_tb.tester.multiplicand_out[31:0]
+(4)multdiv_tb.tester.multiplicand_out[31:0]
+(5)multdiv_tb.tester.multiplicand_out[31:0]
+(6)multdiv_tb.tester.multiplicand_out[31:0]
+(7)multdiv_tb.tester.multiplicand_out[31:0]
+(8)multdiv_tb.tester.multiplicand_out[31:0]
+(9)multdiv_tb.tester.multiplicand_out[31:0]
+(10)multdiv_tb.tester.multiplicand_out[31:0]
+(11)multdiv_tb.tester.multiplicand_out[31:0]
+(12)multdiv_tb.tester.multiplicand_out[31:0]
+(13)multdiv_tb.tester.multiplicand_out[31:0]
+(14)multdiv_tb.tester.multiplicand_out[31:0]
+(15)multdiv_tb.tester.multiplicand_out[31:0]
+(16)multdiv_tb.tester.multiplicand_out[31:0]
+(17)multdiv_tb.tester.multiplicand_out[31:0]
+(18)multdiv_tb.tester.multiplicand_out[31:0]
+(19)multdiv_tb.tester.multiplicand_out[31:0]
+(20)multdiv_tb.tester.multiplicand_out[31:0]
+(21)multdiv_tb.tester.multiplicand_out[31:0]
+(22)multdiv_tb.tester.multiplicand_out[31:0]
+(23)multdiv_tb.tester.multiplicand_out[31:0]
+(24)multdiv_tb.tester.multiplicand_out[31:0]
+(25)multdiv_tb.tester.multiplicand_out[31:0]
+(26)multdiv_tb.tester.multiplicand_out[31:0]
+(27)multdiv_tb.tester.multiplicand_out[31:0]
+(28)multdiv_tb.tester.multiplicand_out[31:0]
+(29)multdiv_tb.tester.multiplicand_out[31:0]
+(30)multdiv_tb.tester.multiplicand_out[31:0]
+(31)multdiv_tb.tester.multiplicand_out[31:0]
+@1401208
+-group_end
+@24
+multdiv_tb.tester.MultiplicandRegister.original_out[31:0]
+@29
+multdiv_tb.tester.AQ_we
+@28
+multdiv_tb.tester.ProductRegister.d[64:0]
+multdiv_tb.tester.ProductRegister.clr
+multdiv_tb.tester.A_add_zero
+multdiv_tb.tester.AQ_we
+multdiv_tb.tester.AQ_sra2
+multdiv_tb.tester.M_sl1
+multdiv_tb.tester.M_negate
+multdiv_tb.tester.adder_out[31:0]
+multdiv_tb.tester.tb_remainder[31:0]
+multdiv_tb.tester.AQ[64:0]
+multdiv_tb.tester.prod_lsb[2:0]
+@420
+multdiv_tb.tester.tb_ans[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
