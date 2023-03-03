@@ -78,7 +78,7 @@ module processor(
         .S(PC_inc), 
         // in
         .A(PC),
-        .B(1'b1),
+        .B(32'b1),
         .Cin(1'b0)
     );
 
@@ -119,6 +119,7 @@ module processor(
         .data_operandA(A_X), 
         .data_operandB(X_i_type ? IR_X[16:0] : B_X), 
         .ctrl_ALUopcode(X_i_type ? 5'b0 : IR_X[6:2]), 
+        .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out)
     );
     wire [16:0] GTK_X_IMM;
