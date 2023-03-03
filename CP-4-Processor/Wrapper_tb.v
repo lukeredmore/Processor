@@ -178,7 +178,7 @@ module Wrapper_tb #(parameter FILE = "nop");
 			// Every rising edge, write to the actual file
 			@(posedge clock);
 			if (rwe && rd != 0) begin
-				$fdisplay(actFile, "Cycle %3d: Wrote %0d into register %0d", cycles, rData, rd);
+				$fdisplay(actFile, "Cycle %3d: Wrote %0d into register %0d", cycles, $signed(rData), rd);
 			end
 		end
 
@@ -218,7 +218,7 @@ module Wrapper_tb #(parameter FILE = "nop");
 			#1;
 
 			// Write the register value to the actual file
-			$fdisplay(actFile, "Reg %2d: %11d", rs1_test, regA);
+			$fdisplay(actFile, "Reg %2d: %11d", rs1_test, $signed(regA));
 			
 			// Compare the Values 
 			if (verify) begin

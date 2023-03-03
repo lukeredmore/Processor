@@ -99,14 +99,14 @@ module processor(
 
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out;
-    wire X_i_type;
+    wire ctrlX_ALUsImm;
     DX DXLatch(
         // Out
         .IR(IR_X),
         .PC(PC_X),
         .A(A_X),
         .B(B_X),
-        .X_i_type(X_i_type),
+        .ctrlX_ALUsImm(ctrlX_ALUsImm),
         // In
         .IR_in(IR_D),
         .PC_in(PC_D),
@@ -119,13 +119,11 @@ module processor(
     sign_extender_17 SE_X(.extended(Imm_SE_X), .in_17(IR_X[16:0]));
     alu ALU(
         .data_operandA(A_X), 
-        .data_operandB(X_i_type ? Imm_SE_X : B_X), 
-        .ctrl_ALUopcode(X_i_type ? 5'b0 : IR_X[6:2]), 
+        .data_operandB(ctrlX_ALUsImm ? Imm_SE_X : B_X), 
+        .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out)
     );
-    // wire [16:0] GTK_X_IMM;
-    // assign GTK_X_IMM = IR_X[16:0];
 
     // XM Latch
     wire [31:0] O_M, B_M, IR_M;

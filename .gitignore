@@ -1,2 +1,3 @@
 Processor-Vivado
 *.vcd
+*.DS_Store

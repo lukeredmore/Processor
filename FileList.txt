@@ -1,3 +1,4 @@
+/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/instruction_decoder.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-1-ALU/alu.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-1-ALU/mux_4.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-1-ALU/bitwise_or.v

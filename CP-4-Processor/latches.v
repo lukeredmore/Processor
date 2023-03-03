@@ -8,8 +8,19 @@ module FD(
     input clock,
     input reset);
 
-    assign IR = IR_in;
-    assign PC = PC_in;
+    register_32 FD_InstructionRegister(
+        .data_out(IR), 
+        .data_in(IR_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
+
+    register_32 FD_ProgramCounter(
+        .data_out(PC), 
+        .data_in(PC_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 endmodule
 
 module DX(
@@ -17,7 +28,7 @@ module DX(
     output [31:0] PC,
     output [31:0] A,
     output [31:0] B,
-    output X_i_type,
+    output ctrlX_ALUsImm,
 
     input [31:0] IR_in,
     input [31:0] PC_in,
@@ -27,13 +38,42 @@ module DX(
     input clock,
     input reset);
 
-    assign IR = IR_in;
-    assign PC = PC_in;
+    register_32 DX_InstructionRegister(
+        .data_out(IR), 
+        .data_in(IR_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 
-    assign A = A_in;
-    assign B = B_in;
+    register_32 DX_ProgramCounter(
+        .data_out(PC), 
+        .data_in(PC_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 
-    assign X_i_type = IR[31:27] == 5;
+    register_32 DX_ARegister(
+        .data_out(A), 
+        .data_in(A_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
+
+    register_32 DX_BRegister(
+        .data_out(B), 
+        .data_in(B_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
+
+    wire addi, sw, lw;
+    instruction_decoder DX_Decoder(
+        .instruction(IR),
+        .addi(addi),
+        .sw(sw),
+        .lw(lw));
+
+    assign ctrlX_ALUsImm = addi | sw | lw;
 endmodule
 
 module XM(
@@ -48,10 +88,26 @@ module XM(
     input clock,
     input reset);
 
-    assign IR = IR_in;
+    register_32 XM_InstructionRegister(
+        .data_out(IR), 
+        .data_in(IR_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 
-    assign B = B_in;
-    assign O = O_in;
+    register_32 XM_ORegister(
+        .data_out(O), 
+        .data_in(O_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
+
+    register_32 XM_BRegister(
+        .data_out(B), 
+        .data_in(B_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 endmodule
 
 module MW(
@@ -66,8 +122,24 @@ module MW(
     input clock,
     input reset);
 
-    assign IR = IR_in;
+    register_32 MW_InstructionRegister(
+        .data_out(IR), 
+        .data_in(IR_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 
-    assign D = D_in;
-    assign O = O_in;
+    register_32 MW_DRegister(
+        .data_out(D), 
+        .data_in(D_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
+
+    register_32 MW_ORegister(
+        .data_out(O), 
+        .data_in(O_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
 endmodule
