@@ -71,7 +71,7 @@ module processor(
        .data_in(PC_inc), 
        .clk(clock),
        .in_enable(1'b1), 
-       .clr(clr)
+       .clr(reset)
     );
     cla_32 PCIncrementer(
         // out
