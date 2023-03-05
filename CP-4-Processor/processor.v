@@ -70,7 +70,7 @@ module processor(
        // in
        .data_in(q_imem[31:27] == 1 ? q_imem[26:0] : PC_inc), 
        .clk(~clock), // falling edge
-       .in_enable(1'b1), 
+       .in_enable(~stall), 
        .clr(reset)
     );
     cla_32 PCIncrementer(
@@ -91,6 +91,7 @@ module processor(
         .PC(PC_D),
         .ctrlD_FetchRdInsteadOfRt(ctrlD_FetchRdInsteadOfRt),
         // In
+        .write_enable(~stall),
         .IR_in(q_imem),
         .PC_in(PC_inc),
         .clock(clock),
@@ -99,6 +100,9 @@ module processor(
     assign ctrl_readRegA = IR_D[21:17]; // $rs
     assign ctrl_readRegB = ctrlD_FetchRdInsteadOfRt ? IR_D[26:22] : IR_D[16:12]; // $rd || $rt
 
+    wire stall;
+    assign stall = IR_D > 0 && ((IR_D[21:17] == IR_X[26:22] && IR_X > 0) || (IR_D[16:12] == IR_X[26:22] && IR_X > 0) || (IR_D[21:17] == IR_M[26:22] && IR_M > 0) || (IR_D[16:12] == IR_M[26:22] && IR_M > 0));
+                    // rs in D  == rd in X      || rt in D      == rd in X      || rs in D      == rd in M    || rt in D      == rd in M
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out;
     wire ctrlX_ALUsImm;
@@ -110,7 +114,7 @@ module processor(
         .B(B_X),
         .ctrlX_ALUsImm(ctrlX_ALUsImm),
         // In
-        .IR_in(IR_D),
+        .IR_in(stall ? {32'b0} : IR_D),
         .PC_in(PC_D),
         .A_in(data_readRegA),
         .B_in(data_readRegB),

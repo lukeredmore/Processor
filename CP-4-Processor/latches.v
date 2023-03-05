@@ -2,7 +2,8 @@ module FD(
     output [31:0] IR,
     output [31:0] PC,
     output ctrlD_FetchRdInsteadOfRt,
-
+    
+    input write_enable,
     input [31:0] IR_in,
     input [31:0] PC_in,
 
@@ -13,14 +14,14 @@ module FD(
         .data_out(IR), 
         .data_in(IR_in), 
         .clk(~clock), // Falling edge
-        .in_enable(1'b1), 
+        .in_enable(write_enable), 
         .clr(reset));
 
     register_32 FD_ProgramCounter(
         .data_out(PC), 
         .data_in(PC_in), 
         .clk(~clock), // Falling edge
-        .in_enable(1'b1), 
+        .in_enable(write_enable), 
         .clr(reset));
 
     wire sw;
