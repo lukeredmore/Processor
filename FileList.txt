@@ -1,4 +1,3 @@
-/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/instruction_decoder.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-1-ALU/alu.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-1-ALU/mux_4.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-1-ALU/bitwise_or.v
@@ -17,6 +16,7 @@
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-2-Regflie/dffe_ref.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-2-Regflie/register_32.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-2-Regflie/regfile.v
+/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/instruction_decoder.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/latches.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/sign_extender.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/Wrapper.v

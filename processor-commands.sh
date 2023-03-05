@@ -19,9 +19,23 @@ function ivrun() {
   rm ivrun.out
 }
 
+function ivruncomp() {
+  cwd2=$(pwd)
+  assemblyfile=`realpath $1`
+  testname=${assemblyfile:t:r}
+  # echo $testname
+  cd ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor
+  ./Test\ Files/Assembly\ Files/assembler/asm $assemblyfile
+  mv ./Test\ Files/Assembly\ Files/$testname.mem ./Test\ Files/Memory\ Files/$testname.mem
+  ivrunproc $testname
+  cd $cwd2
+
+}
+
 function ivrunproc() {
   updatefilelist
   cwd=$(pwd)
+  cd ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor/
   tb=~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor/Wrapper_tb.v
   echo $tb >> ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/FileList.txt
   tbname=Wrapper_tb
@@ -30,5 +44,5 @@ function ivrunproc() {
   cd $cwd
   vvp ivrun.out
   rm ivrun.out
-  
+  cd $cwd
 }

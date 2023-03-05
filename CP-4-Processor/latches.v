@@ -1,6 +1,7 @@
 module FD(
     output [31:0] IR,
     output [31:0] PC,
+    output ctrlD_FetchRdInsteadOfRt,
 
     input [31:0] IR_in,
     input [31:0] PC_in,
@@ -21,6 +22,13 @@ module FD(
         .clk(~clock), // Falling edge
         .in_enable(1'b1), 
         .clr(reset));
+
+    wire sw;
+    instruction_decoder DX_Decoder(
+        .instruction(IR),
+        .sw(sw));
+
+    assign ctrlD_FetchRdInsteadOfRt = sw;
 endmodule
 
 module DX(
@@ -80,6 +88,7 @@ module XM(
     output [31:0] IR,
     output [31:0] O,
     output [31:0] B,
+    output ctrlM_DmemWe,
 
     input [31:0] IR_in,
     input [31:0] O_in,
@@ -108,12 +117,20 @@ module XM(
         .clk(~clock), // Falling edge
         .in_enable(1'b1), 
         .clr(reset));
+
+    wire sw;
+    instruction_decoder XM_Decoder(
+        .instruction(IR),
+        .sw(sw));
+    assign ctrlM_DmemWe = sw;
 endmodule
 
 module MW(
     output [31:0] IR,
     output [31:0] O,
     output [31:0] D,
+    output ctrlW_RegInToMemOut,
+    output ctrlW_RegfileWe,
 
     input [31:0] IR_in,
     input [31:0] O_in,
@@ -142,4 +159,16 @@ module MW(
         .clk(~clock), // Falling edge
         .in_enable(1'b1), 
         .clr(reset));
+
+    wire lw, alu, jal, setx, addi;
+    instruction_decoder MW_Decoder(
+        .instruction(IR),
+        .alu(alu),
+        .addi(addi),
+        .jal(jal),
+        .setx(setx),
+        .lw(lw));
+
+    assign ctrlW_RegInToMemOut = lw;
+    assign ctrlW_RegfileWe = lw || alu || jal || setx || addi;
 endmodule
