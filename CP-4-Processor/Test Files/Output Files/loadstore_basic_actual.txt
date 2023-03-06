@@ -3,7 +3,7 @@ Cycle  11: Wrote 3 into register 3
 Cycle  19: Wrote 12 into register 10
 Cycle  20: Wrote 3 into register 5
 Cycle  24: Wrote 24 into register 11
-Cycle  27: Wrote 21 into register 12
+Cycle  28: Wrote 21 into register 12
 ============== Testing Mode ==============
 Reg  0:           0
 Reg  1:          12

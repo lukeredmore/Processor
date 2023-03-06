@@ -103,15 +103,13 @@ module processor(
     assign ctrl_readRegA = IR_D[21:17]; // $rs
     assign ctrl_readRegB = ctrlD_FetchRdInsteadOfRt ? IR_D[26:22] : IR_D[16:12]; // $rd || $rt
 
-    wire RdBeingWrittenToAhead, RtBeingWrittenToAhead, RsBeingWrittenToAhead;
+    wire RdBeingWrittenToAhead, RtBeingWrittenToAhead, RsBeingWrittenToAhead, loadOutputToALUInput;
     assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M > 0 && IR_D[26:22] == IR_M[26:22]);
     assign RtBeingWrittenToAhead = (IR_X > 0 && IR_D[16:12] == IR_X[26:22]) || (IR_M > 0 && IR_D[16:12] == IR_M[26:22]);
     assign RsBeingWrittenToAhead = (IR_X > 0 && IR_D[21:17] == IR_X[26:22]) || (IR_M > 0 && IR_D[21:17] == IR_M[26:22]);
 
-    assign stall = (ctrlD_PCinToRegFileOut && RdBeingWrittenToAhead) | ctrlX_startMult | ctrlX_startDiv | multdiv_operating | RtBeingWrittenToAhead | RsBeingWrittenToAhead;
-
     // DX Latch
-    wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out;
+    wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out, A_X_Bp, B_X_Bp;
     wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv;
     DX DXLatch(
         // Out
@@ -133,8 +131,8 @@ module processor(
     wire [31:0] Imm_SE_X;
     sign_extender_17 SE_X(.extended(Imm_SE_X), .in_17(IR_X[16:0]));
     alu ALU(
-        .data_operandA(A_X), 
-        .data_operandB(ctrlX_ALUsImm ? Imm_SE_X : B_X), 
+        .data_operandA(A_X_Bp), 
+        .data_operandB(ctrlX_ALUsImm ? Imm_SE_X : B_X_Bp), 
         .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out)
@@ -142,8 +140,8 @@ module processor(
     wire temp_ready, temp_exception;
     wire [31:0] temp_result;
     multdiv Multiplier(
-        .data_operandA(A_X), 
-        .data_operandB(B_X),
+        .data_operandA(A_X_Bp), 
+        .data_operandB(B_X_Bp),
         .ctrl_MULT(ctrlX_startMult), 
         .ctrl_DIV(ctrlX_startDiv), 
 	    .clock(clock),
@@ -168,6 +166,14 @@ module processor(
         .reset(reset)
     );
 
+    loadOutputToALUInputDetector BypassStallDetector(
+        .IR_X(IR_X),
+        .IR_D(IR_D),
+        .loadOutputToALUInput(loadOutputToALUInput)
+    );
+
+    assign stall = ctrlX_startMult | ctrlX_startDiv | multdiv_operating | loadOutputToALUInput | (ctrlD_PCinToRegFileOut && RdBeingWrittenToAhead);
+
     // XM Latch
     wire [31:0] O_M, B_M, IR_M;
     XM XMLatch(
@@ -184,7 +190,7 @@ module processor(
         .reset(reset)
     );
     assign address_dmem = O_M;
-    assign data = B_M;
+    assign data = B_M_Bp;
 
     // MW Latch
     wire [31:0] O_W, D_W, IR_W;
@@ -206,5 +212,20 @@ module processor(
     assign ctrl_writeReg = ctrlPW_RegInToPOut ? IR_PW[26:22] : IR_W[26:22];
     assign data_writeReg = ctrlPW_RegInToPOut ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
     assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
+
+    wire [31:0] B_M_Bp;
+    bypass Bypasser(
+        .IR_X(IR_X),
+        .IR_M(IR_M),
+        .IR_W(IR_W),
+        .Regfile_in(data_writeReg),
+        .M_O(O_M),
+        .M_B(B_M),
+        .X_A(A_X),
+        .X_B(B_X),
+        .DX_out_A(A_X_Bp),
+        .DX_out_B(B_X_Bp),
+        .XM_out_B(B_M_Bp)
+    );
 
 endmodule

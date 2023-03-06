@@ -1,4 +1,4 @@
-Cycle   8: Wrote 69 into register 1
+Cycle   6: Wrote 69 into register 1
 ============== Testing Mode ==============
 Reg  0:           0
 Reg  1:          69

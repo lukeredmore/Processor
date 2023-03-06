@@ -1,6 +1,9 @@
 module instruction_decoder(
     input [31:0] instruction,
-    output alu, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx);
+    output alu, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx,
+    output [1:0] type, // 0 = R, 1 = I, 2 = JI, 3 = JII
+    output [4:0] Rs, Rd, Rt
+);
 
     wire [4:0] opcode, alu_op;
     assign opcode = instruction[31:27];
@@ -20,4 +23,9 @@ module instruction_decoder(
     assign bex = opcode == 22;
     assign setx = opcode == 21;
 
+    assign type = jr ? 2'b11 : (j | jal | bex | setx ? 2'b10 : (sw | lw | bne | blt ? 2'b01 : 2'b00));
+
+    assign Rd = instruction[26:22];
+    assign Rs = instruction[21:17];
+    assign Rt = instruction[16:12];
 endmodule
