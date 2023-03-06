@@ -15,5 +15,5 @@ module div_ctrl(
 
     assign load_AQ = 1'b1;
     assign sub_M = ~mmsb_A;
-    assign ready = count[5] & ~count[4] & ~count[3] & ~count[2] & ~count[1] & count[0];
+    assign ready = count[5] & ~count[4] & ~count[3] & ~count[2] & ~count[1] & ~count[0];
 endmodule

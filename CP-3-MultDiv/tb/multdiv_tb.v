@@ -83,7 +83,7 @@ module multdiv_tb;
 			tests = tests + 1;
 
 			@(negedge clock);
-			{ctrl_Mult, ctrl_Div} = 0;
+			{ctrl_Mult, ctrl_Div, operandA, operandB} = 0;
 
 			if(interrupt) begin
 				for (i = 0; i < 5; i = i + 1) begin

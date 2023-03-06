@@ -21,5 +21,5 @@ module m_register_32(
     register_32 Register(original_out, data_in, clk, in_enable, clr);
     assign shifted_out = sl1_enable ? original_out << 1 : original_out;
     assign data_out = invert ? ~shifted_out : shifted_out;
-    assign is_zero = &original_out;
+    assign is_zero = ~|original_out;
 endmodule

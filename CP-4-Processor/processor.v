@@ -64,6 +64,7 @@ module processor(
     // Program Counter
 	wire [31:0] PC, PC_inc;
     assign address_imem = PC;
+    wire stall;
 	register_32 ProgramCounter(
         // out
        .data_out(PC), 
@@ -100,12 +101,12 @@ module processor(
     assign ctrl_readRegA = IR_D[21:17]; // $rs
     assign ctrl_readRegB = ctrlD_FetchRdInsteadOfRt ? IR_D[26:22] : IR_D[16:12]; // $rd || $rt
 
-    wire stall;
-    assign stall = IR_D > 0 && ((IR_D[21:17] == IR_X[26:22] && IR_X > 0) || (IR_D[16:12] == IR_X[26:22] && IR_X > 0) || (IR_D[21:17] == IR_M[26:22] && IR_M > 0) || (IR_D[16:12] == IR_M[26:22] && IR_M > 0));
+    
+    assign stall = ctrlX_startMult | ctrlX_startDiv | multdiv_operating | (IR_D > 0 && ((IR_D[21:17] == IR_X[26:22] && IR_X > 0) || (IR_D[16:12] == IR_X[26:22] && IR_X > 0) || (IR_D[21:17] == IR_M[26:22] && IR_M > 0) || (IR_D[16:12] == IR_M[26:22] && IR_M > 0)));
                     // rs in D  == rd in X      || rt in D      == rd in X      || rs in D      == rd in M    || rt in D      == rd in M
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out;
-    wire ctrlX_ALUsImm;
+    wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv;
     DX DXLatch(
         // Out
         .IR(IR_X),
@@ -113,6 +114,8 @@ module processor(
         .A(A_X),
         .B(B_X),
         .ctrlX_ALUsImm(ctrlX_ALUsImm),
+        .ctrlX_startMult(ctrlX_startMult),
+        .ctrlX_startDiv(ctrlX_startDiv),
         // In
         .IR_in(stall ? {32'b0} : IR_D),
         .PC_in(PC_D),
@@ -129,6 +132,34 @@ module processor(
         .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out)
+    );
+    wire temp_ready, temp_exception;
+    wire [31:0] temp_result;
+    multdiv Multiplier(
+        .data_operandA(A_X), 
+        .data_operandB(B_X),
+        .ctrl_MULT(ctrlX_startMult), 
+        .ctrl_DIV(ctrlX_startDiv), 
+	    .clock(clock),
+        .data_resultRDY(temp_ready),
+        .data_exception(temp_exception),
+        .data_result(temp_result)
+    );
+    wire [31:0] P_PW, IR_PW;
+    wire ctrlPW_RegInToPOut, ctrlPW_RegfileWe, multdiv_operating;
+    PW PWLatch(
+        // Out
+        .IR(IR_PW),
+        .P(P_PW),
+        .ctrlPW_RegInToPOut(ctrlPW_RegInToPOut),
+        .ctrlPW_RegfileWe(ctrlPW_RegfileWe),
+        .isOperating(multdiv_operating),
+        // In
+        .IR_in(IR_X),
+        .P_in(temp_result),
+        .dataReady(temp_ready),
+        .clock(clock),
+        .reset(reset)
     );
 
     // XM Latch
@@ -151,14 +182,14 @@ module processor(
 
     // MW Latch
     wire [31:0] O_W, D_W, IR_W;
-    wire ctrlW_RegInToMemOut;
+    wire ctrlW_RegInToMemOut, ctrlW_RegfileWe;
     MW MWLatch(
         // Out
         .IR(IR_W),
         .O(O_W),
         .D(D_W),
         .ctrlW_RegInToMemOut(ctrlW_RegInToMemOut),
-        .ctrlW_RegfileWe(ctrl_writeEnable),
+        .ctrlW_RegfileWe(ctrlW_RegfileWe),
         // In
         .IR_in(IR_M),
         .O_in(O_M),
@@ -166,8 +197,8 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
-    assign ctrl_writeReg = IR_W[26:22];
-    assign data_writeReg = ctrlW_RegInToMemOut ? D_W : O_W;
-
+    assign ctrl_writeReg = ctrlPW_RegInToPOut ? IR_PW[26:22] : IR_W[26:22];
+    assign data_writeReg = ctrlPW_RegInToPOut ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
+    assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
 
 endmodule

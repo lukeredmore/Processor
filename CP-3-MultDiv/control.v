@@ -43,7 +43,7 @@ module control(
             mult_sub_M, 
             mult_M_sl1, 
             mult_load_prod, 
-            mult_shift_prod,
+            ~start,
             mult_ready
         };
 

@@ -17,17 +17,18 @@ module multdiv(
     assign significant_upper = |upper_result;
     assign unexpected_sign_mult = expect_negative_result ^ sign_corrected_result[31];
     assign unexpected_sign_div = unexpected_sign_mult & |sign_corrected_result;
-    assign data_exception = should_div ?
+    assign data_exception = ~ctrl_MULT & ~ctrl_DIV ? (should_div ?
         unexpected_sign_div | M_is_zero : 
-        unexpected_sign_mult | significant_upper;
+        unexpected_sign_mult | significant_upper) : 1'b0;
 
     // latch mult or div
     wire should_div_prelim, should_div;
-    assign should_div = should_div_prelim | ctrl_DIV;
+    assign should_div = ~ctrl_MULT & (should_div_prelim | ctrl_DIV);
     dffe_ref ShouldDiv(
         .q(should_div_prelim),
         .d(ctrl_DIV),
         .clk(clock),
+        // .clr(ctrl_MULT | ctrl_DIV),
         .en(ctrl_MULT | ctrl_DIV));
 
     // expect a negative result?
@@ -90,16 +91,16 @@ module multdiv(
         // in
         .data_in(should_div ? data_operandB_positive : data_operandA), 
         .clk(clock), 
-        .in_enable(count_is_zero), 
+        .in_enable(ctrl_DIV | ctrl_MULT), 
         .sl1_enable(M_sl1), 
         .invert(M_negate),
-        .clr(ctrl_MULT | ctrl_DIV));
+        .clr(1'b0));
 
     // adder
     wire [31:0] adder_out;
     wire AQ_sl1_in0, AQ_sl1_in1;
-    assign AQ_sl1_in0 = should_div & (count_is_zero | adder_out[31]);
-    assign AQ_sl1_in1 = should_div & ~count_is_zero & ~adder_out[31];
+    assign AQ_sl1_in0 = should_div & (ctrl_DIV | adder_out[31]);
+    assign AQ_sl1_in1 = should_div & ~ctrl_DIV & ~adder_out[31];
     cla_32 Adder(
         // out
         .S(adder_out), 
@@ -116,15 +117,15 @@ module multdiv(
         // out
         .q(AQ), 
         // in
-        .d(count_is_zero ? AQ_init : AQ_in), 
+        .d(ctrl_DIV | ctrl_MULT ? AQ_init : AQ_in), 
         .clk(clock), 
-        .in_enable(count_is_zero | AQ_we), 
+        .in_enable(ctrl_DIV | ctrl_MULT | AQ_we), 
         .sra2_enable(AQ_sra2),
         .sl1_in0(AQ_sl1_in0), 
         .sl1_in1(AQ_sl1_in1), 
-        .clr(ctrl_MULT | ctrl_DIV));
+        .clr(1'b0));
 
-    /* Test wires for gtkwave
+    // Test wires for gtkwave
     wire [31:0] A, Q;
     wire Q_prev_lsb, A_prev_msb;
     wire [2:0] AQ_lsb; 
@@ -132,5 +133,5 @@ module multdiv(
     assign A_prev_msb = AQ[65];
     assign AQ_lsb = AQ[2:0];
     assign Q = AQ[32:1];
-    assign A = AQ[64:33]; */
+    assign A = AQ[64:33]; 
 endmodule

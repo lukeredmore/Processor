@@ -38,6 +38,8 @@ module DX(
     output [31:0] A,
     output [31:0] B,
     output ctrlX_ALUsImm,
+    output ctrlX_startMult,
+    output ctrlX_startDiv,
 
     input [31:0] IR_in,
     input [31:0] PC_in,
@@ -75,14 +77,18 @@ module DX(
         .in_enable(1'b1), 
         .clr(reset));
 
-    wire addi, sw, lw;
+    wire addi, sw, lw, mul, div;
     instruction_decoder DX_Decoder(
         .instruction(IR),
         .addi(addi),
         .sw(sw),
+        .mul(mul),
+        .div(div),
         .lw(lw));
 
     assign ctrlX_ALUsImm = addi | sw | lw;
+    assign ctrlX_startMult = mul;
+    assign ctrlX_startDiv = div;
 endmodule
 
 module XM(
@@ -172,4 +178,49 @@ module MW(
 
     assign ctrlW_RegInToMemOut = lw;
     assign ctrlW_RegfileWe = lw || alu || jal || setx || addi;
+endmodule
+
+module PW(
+    output [31:0] IR,
+    output [31:0] P,
+    output ctrlPW_RegInToPOut,
+    output ctrlPW_RegfileWe,
+    output isOperating,
+
+    input [31:0] IR_in,
+    input [31:0] P_in,
+    input dataReady,
+
+    input clock,
+    input reset);
+
+    wire dataReadyDelayed;
+    dffe_ref DelayReady(
+        .q(dataReadyDelayed), 
+        .d(dataReady), .clk(clock), .en(1'b1), .clr(1'b0));
+
+
+    register_32 PW_InstructionRegister(
+        .data_out(IR), 
+        .data_in(IR_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(~isOperating | dataReadyDelayed), 
+        .clr(reset));
+
+    register_32 PW_PRegister(
+        .data_out(P), 
+        .data_in(P_in), 
+        .clk(~clock), // Falling edge
+        .in_enable(1'b1), 
+        .clr(reset));
+
+    wire mul, div;
+    instruction_decoder MW_Decoder(
+        .instruction(IR),
+        .mul(mul),
+        .div(div));
+
+    assign ctrlPW_RegInToPOut = mul | div;
+    assign ctrlPW_RegfileWe = mul | div;
+    assign isOperating = mul | div;
 endmodule
