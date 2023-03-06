@@ -209,8 +209,8 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
-    assign ctrl_writeReg = ctrlPW_RegInToPOut ? IR_PW[26:22] : IR_W[26:22];
-    assign data_writeReg = ctrlPW_RegInToPOut ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
+    assign ctrl_writeReg = ctrlPW_RegInToPOut && temp_ready ? IR_PW[26:22] : IR_W[26:22];
+    assign data_writeReg = ctrlPW_RegInToPOut && temp_ready ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
     assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
 
     wire [31:0] B_M_Bp;

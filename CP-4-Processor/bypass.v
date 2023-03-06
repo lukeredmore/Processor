@@ -44,16 +44,16 @@ module bypass(
         .Rt(W_Rt)
     );
 
-    assign DX_out_A = X_Rs == M_Rd 
+    assign DX_out_A = X_Rs == M_Rd && X_Rs != 0
         ? M_O :
-        (X_Rs == W_Rd 
+        (X_Rs == W_Rd && X_Rs > 0
             ? Regfile_in : X_A);
 
-    assign DX_out_B = X_Rt == M_Rd 
+    assign DX_out_B = X_Rt == M_Rd && X_Rt != 0
         ? M_O :
-        (X_Rt == W_Rd 
+        (X_Rt == W_Rd && X_Rs > 0
             ? Regfile_in : X_B);
 
     //only matters for sw instruction
-    assign XM_out_B = W_Rd == M_Rd ? Regfile_in : M_B;
+    assign XM_out_B = W_Rd == M_Rd && M_Rd != 0 ? Regfile_in : M_B;
 endmodule
