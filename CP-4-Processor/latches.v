@@ -2,6 +2,8 @@ module FD(
     output [31:0] IR,
     output [31:0] PC,
     output ctrlD_FetchRdInsteadOfRt,
+    output ctrlD_PCinToRegFileOut,
+    output ctrlD_insertNopInF,
     
     input write_enable,
     input [31:0] IR_in,
@@ -24,12 +26,15 @@ module FD(
         .in_enable(write_enable), 
         .clr(reset));
 
-    wire sw;
+    wire sw, jr;
     instruction_decoder DX_Decoder(
         .instruction(IR),
+        .jr(jr),
         .sw(sw));
 
-    assign ctrlD_FetchRdInsteadOfRt = sw;
+    assign ctrlD_FetchRdInsteadOfRt = sw | jr;
+    assign ctrlD_PCinToRegFileOut = jr;
+    assign ctrlD_insertNopInF = jr;
 endmodule
 
 module DX(

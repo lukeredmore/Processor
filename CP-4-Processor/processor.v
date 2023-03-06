@@ -64,12 +64,12 @@ module processor(
     // Program Counter
 	wire [31:0] PC, PC_inc;
     assign address_imem = PC;
-    wire stall;
+    wire stall, ctrlD_PCinToRegFileOut;
 	register_32 ProgramCounter(
         // out
        .data_out(PC), 
        // in
-       .data_in(q_imem[31:27] == 1 ? q_imem[26:0] : PC_inc), 
+       .data_in(q_imem[31:27] == 1 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? data_readRegB : PC_inc)), 
        .clk(~clock), // falling edge
        .in_enable(~stall), 
        .clr(reset)
@@ -85,15 +85,17 @@ module processor(
 
     // FD Latch
     wire [31:0] IR_D, PC_D;
-    wire ctrlD_FetchRdInsteadOfRt;
+    wire ctrlD_FetchRdInsteadOfRt, ctrlD_insertNopInF;
     FD FDLatch(
         // Out
         .IR(IR_D),
         .PC(PC_D),
         .ctrlD_FetchRdInsteadOfRt(ctrlD_FetchRdInsteadOfRt),
+        .ctrlD_PCinToRegFileOut(ctrlD_PCinToRegFileOut),
+        .ctrlD_insertNopInF(ctrlD_insertNopInF),
         // In
         .write_enable(~stall),
-        .IR_in(q_imem),
+        .IR_in(ctrlD_insertNopInF ? {32'b0} : q_imem),
         .PC_in(PC_inc),
         .clock(clock),
         .reset(reset)
@@ -101,9 +103,13 @@ module processor(
     assign ctrl_readRegA = IR_D[21:17]; // $rs
     assign ctrl_readRegB = ctrlD_FetchRdInsteadOfRt ? IR_D[26:22] : IR_D[16:12]; // $rd || $rt
 
-    
-    assign stall = ctrlX_startMult | ctrlX_startDiv | multdiv_operating | (IR_D > 0 && ((IR_D[21:17] == IR_X[26:22] && IR_X > 0) || (IR_D[16:12] == IR_X[26:22] && IR_X > 0) || (IR_D[21:17] == IR_M[26:22] && IR_M > 0) || (IR_D[16:12] == IR_M[26:22] && IR_M > 0)));
-                    // rs in D  == rd in X      || rt in D      == rd in X      || rs in D      == rd in M    || rt in D      == rd in M
+    wire RdBeingWrittenToAhead, RtBeingWrittenToAhead, RsBeingWrittenToAhead;
+    assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M > 0 && IR_D[26:22] == IR_M[26:22]);
+    assign RtBeingWrittenToAhead = (IR_X > 0 && IR_D[16:12] == IR_X[26:22]) || (IR_M > 0 && IR_D[16:12] == IR_M[26:22]);
+    assign RsBeingWrittenToAhead = (IR_X > 0 && IR_D[21:17] == IR_X[26:22]) || (IR_M > 0 && IR_D[21:17] == IR_M[26:22]);
+
+    assign stall = (ctrlD_PCinToRegFileOut && RdBeingWrittenToAhead) | ctrlX_startMult | ctrlX_startDiv | multdiv_operating | RtBeingWrittenToAhead | RsBeingWrittenToAhead;
+
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out;
     wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv;

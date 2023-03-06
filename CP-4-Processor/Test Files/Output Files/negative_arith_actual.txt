@@ -1,14 +1,14 @@
-Cycle   7: Wrote 1 into register 3
-Cycle   8: Wrote 35 into register 4
-Cycle   9: Wrote 3 into register 1
-Cycle  10: Wrote 21 into register 2
-Cycle  11: Wrote -1 into register 3
-Cycle  12: Wrote -35 into register 4
-Cycle  15: Wrote -68 into register 11
-Cycle  16: Wrote -14 into register 12
-Cycle  17: Wrote -56 into register 13
-Cycle  18: Wrote -65536 into register 14
-Cycle  19: Wrote -1 into register 15
+Cycle  10: Wrote 1 into register 3
+Cycle  11: Wrote 35 into register 4
+Cycle  12: Wrote 3 into register 1
+Cycle  13: Wrote 21 into register 2
+Cycle  14: Wrote -1 into register 3
+Cycle  15: Wrote -35 into register 4
+Cycle  18: Wrote -68 into register 11
+Cycle  19: Wrote -14 into register 12
+Cycle  20: Wrote -56 into register 13
+Cycle  21: Wrote -65536 into register 14
+Cycle  22: Wrote -1 into register 15
 ============== Testing Mode ==============
 Reg  0:           0
 Reg  1:           3

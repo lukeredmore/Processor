@@ -29,7 +29,18 @@ function ivruncomp() {
   mv ./Test\ Files/Assembly\ Files/$testname.mem ./Test\ Files/Memory\ Files/$testname.mem
   ivrunproc $testname
   cd $cwd2
+}
 
+function ivrunall() {
+  cwd3=$(pwd)
+  cd ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor/
+  for f in ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor/Test\ Files/Memory\ Files/**/*(.)
+    do
+    testname=${f:t:r}
+    printf "$testname: "
+    ivrunproc $testname | grep -E 'Finished [0-9]+ cycles( with [0-9]+ error(s)?)?'
+  done
+  cd $cwd
 }
 
 function ivrunproc() {
