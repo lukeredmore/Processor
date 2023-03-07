@@ -36,9 +36,11 @@ module bypass(
 
     wire [1:0] W_type; // 0 = R, 1 = I, 2 = JI, 3 = JII
     wire [4:0] W_Rs, W_Rd, W_Rt;
+    wire W_sw;
     instruction_decoder WDecoder(
         .instruction(IR_W),
         .type(W_type),
+        .sw(W_sw),
         .Rs(W_Rs),
         .Rd(W_Rd),
         .Rt(W_Rt)
@@ -46,12 +48,12 @@ module bypass(
 
     assign DX_out_A = X_Rs == M_Rd && X_Rs != 0
         ? M_O :
-        (X_Rs == W_Rd && X_Rs > 0
+        (X_Rs == W_Rd && X_Rs > 0 && ~W_sw // input to alu is currently being written to regfile, intercept it
             ? Regfile_in : X_A);
 
     assign DX_out_B = X_Rt == M_Rd && X_Rt != 0
         ? M_O :
-        (X_Rt == W_Rd && X_Rs > 0
+        (X_Rt == W_Rd && X_Rs > 0 && ~W_sw
             ? Regfile_in : X_B);
 
     //only matters for sw instruction
