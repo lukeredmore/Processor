@@ -1,4 +1,4 @@
-nop 			# Basic Arithmetic Test with no Hazards
+nop 			# Basic Arithmetic Test with no Hazards Gradescope 1.2
 nop 			# Values initialized using addi (positive only) and sub
 nop 			# Author: Oliver Rodas
 nop

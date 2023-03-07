@@ -62,14 +62,15 @@ module processor(
 	input [31:0] data_readRegA, data_readRegB;
 
     // Program Counter
-	wire [31:0] PC, PC_inc;
+	wire [31:0] PC, PC_inc, PC_in, PC_in_bp;
     assign address_imem = PC;
     wire stall, ctrlD_PCinToRegFileOut;
+    assign PC_in = q_imem[31:27] == 1 || q_imem[31:27] == 3 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? PC_in_bp : PC_inc);
 	register_32 ProgramCounter(
         // out
        .data_out(PC), 
        // in
-       .data_in(q_imem[31:27] == 1 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? data_readRegB : PC_inc)), 
+       .data_in(PC_in), 
        .clk(~clock), // falling edge
        .in_enable(~stall), 
        .clr(reset)
@@ -110,7 +111,7 @@ module processor(
 
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out, A_X_Bp, B_X_Bp;
-    wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv;
+    wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv, ctrlX_setPCtoOin;
     DX DXLatch(
         // Out
         .IR(IR_X),
@@ -120,6 +121,7 @@ module processor(
         .ctrlX_ALUsImm(ctrlX_ALUsImm),
         .ctrlX_startMult(ctrlX_startMult),
         .ctrlX_startDiv(ctrlX_startDiv),
+        .ctrlX_setPCtoOin(ctrlX_setPCtoOin),
         // In
         .IR_in(stall ? {32'b0} : IR_D),
         .PC_in(PC_D),
@@ -165,6 +167,13 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
+    jal_bypass JalBypasser(
+        .PC_X(PC_X),
+        .IR_D(IR_D),
+        .IR_X(IR_X),
+        .PC_in_default(data_readRegB),
+        .PC_in_bp(PC_in_bp)
+    );
 
     loadOutputToALUInputDetector BypassStallDetector(
         .IR_X(IR_X),
@@ -184,7 +193,7 @@ module processor(
         .ctrlM_DmemWe(wren),
         // In
         .IR_in(IR_X),
-        .O_in(ALU_out),
+        .O_in(ctrlX_setPCtoOin ? PC_X : ALU_out),
         .B_in(B_X),
         .clock(clock),
         .reset(reset)
@@ -194,7 +203,7 @@ module processor(
 
     // MW Latch
     wire [31:0] O_W, D_W, IR_W;
-    wire ctrlW_RegInToMemOut, ctrlW_RegfileWe;
+    wire ctrlW_RegInToMemOut, ctrlW_RegfileWe, ctrlW_WriteToR31;
     MW MWLatch(
         // Out
         .IR(IR_W),
@@ -202,6 +211,7 @@ module processor(
         .D(D_W),
         .ctrlW_RegInToMemOut(ctrlW_RegInToMemOut),
         .ctrlW_RegfileWe(ctrlW_RegfileWe),
+        .ctrlW_WriteToR31(ctrlW_WriteToR31),
         // In
         .IR_in(IR_M),
         .O_in(O_M),
@@ -209,7 +219,7 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
-    assign ctrl_writeReg = ctrlPW_RegInToPOut && temp_ready ? IR_PW[26:22] : IR_W[26:22];
+    assign ctrl_writeReg = ctrlW_WriteToR31 ? {5'b11111} : (ctrlPW_RegInToPOut && temp_ready ? IR_PW[26:22] : IR_W[26:22]);
     assign data_writeReg = ctrlPW_RegInToPOut && temp_ready ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
     assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
 

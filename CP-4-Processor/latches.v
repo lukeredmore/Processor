@@ -45,6 +45,7 @@ module DX(
     output ctrlX_ALUsImm,
     output ctrlX_startMult,
     output ctrlX_startDiv,
+    output ctrlX_setPCtoOin,
 
     input [31:0] IR_in,
     input [31:0] PC_in,
@@ -82,18 +83,20 @@ module DX(
         .in_enable(1'b1), 
         .clr(reset));
 
-    wire addi, sw, lw, mul, div;
+    wire addi, sw, lw, mul, div, jal;
     instruction_decoder DX_Decoder(
         .instruction(IR),
         .addi(addi),
         .sw(sw),
         .mul(mul),
         .div(div),
+        .jal(jal),
         .lw(lw));
 
     assign ctrlX_ALUsImm = addi | sw | lw;
     assign ctrlX_startMult = mul;
     assign ctrlX_startDiv = div;
+    assign ctrlX_setPCtoOin = jal;
 endmodule
 
 module XM(
@@ -143,6 +146,7 @@ module MW(
     output [31:0] D,
     output ctrlW_RegInToMemOut,
     output ctrlW_RegfileWe,
+    output ctrlW_WriteToR31,
 
     input [31:0] IR_in,
     input [31:0] O_in,
@@ -183,6 +187,7 @@ module MW(
 
     assign ctrlW_RegInToMemOut = lw;
     assign ctrlW_RegfileWe = lw || alu || jal || setx || addi;
+    assign ctrlW_WriteToR31 = jal;
 endmodule
 
 module PW(

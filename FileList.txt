@@ -20,6 +20,7 @@
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/instruction_decoder.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/latches.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/sign_extender.v
+/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/jal_bypass.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/Wrapper.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/RAM.v
 /Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/Spring 2023/ECE 350/Processor/CP-4-Processor/processor.v

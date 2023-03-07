@@ -34,11 +34,21 @@ function ivruncomp() {
 function ivrunall() {
   cwd3=$(pwd)
   cd ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor/
+  printf "cycles\terrors\ttest\n"
   for f in ~/Library/CloudStorage/OneDrive-DukeUniversity/Spring\ 2023/ECE\ 350/Processor/CP-4-Processor/Test\ Files/Memory\ Files/**/*(.)
     do
     testname=${f:t:r}
-    printf "$testname: "
-    ivrunproc $testname | grep -E 'Finished [0-9]+ cycles( with [0-9]+ error(s)?)?'
+    # printf "$testname\t"
+    str=`ivrunproc $testname | grep -E 'Finished [0-9]+ cycles( with [0-9]+ error(s)?)?'`
+    N=${str#Finished }      # remove "Finished " from the beginning of $str
+    N=${N%% cycles*}        # remove " cycles" and everything after it from the end of $N
+    M=${str##*with }        # remove everything before "with " from the beginning of $str
+    M=${M%% errors*}        # remove " errors" and everything after it from the end of $M
+    if [[ $M -eq 0 ]]; then
+      M=" "
+    fi
+    printf "$N\t$M\t$testname\n"
+    # column -t -s "|" <<< "$N|$M|$testname"
   done
   cd $cwd
 }
