@@ -123,6 +123,7 @@ module processor(
         .ctrlX_startDiv(ctrlX_startDiv),
         .ctrlX_setPCtoOin(ctrlX_setPCtoOin),
         .ctrlX_isBNE(ctrlX_isBNE),
+        .ctrlX_isBLT(ctrlX_isBLT),
         // In
         .IR_in(stall ? {32'b0} : IR_D),
         .PC_in(PC_D),
@@ -141,15 +142,16 @@ module processor(
         .B(Imm_SE_X),
         .Cin(1'b0)
     );
-    assign shouldBranch = alu_is_not_equal && ctrlX_isBNE;
-    wire alu_is_not_equal;
+    assign shouldBranch = alu_is_not_equal && ctrlX_isBNE || alu_is_less_than && ctrlX_isBLT;
+    wire alu_is_not_equal, alu_is_less_than;
     alu ALU(
-        .data_operandA(A_X_Bp), 
-        .data_operandB(ctrlX_ALUsImm ? Imm_SE_X : B_X_Bp), 
-        .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : IR_X[6:2]), 
+        .data_operandA(ctrlX_isBLT ? B_X_Bp : A_X_Bp), 
+        .data_operandB(ctrlX_isBLT ? A_X_Bp : ctrlX_ALUsImm ? Imm_SE_X : B_X_Bp), 
+        .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : ctrlX_isBLT ? 5'b1 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out),
-        .isNotEqual(alu_is_not_equal)
+        .isNotEqual(alu_is_not_equal),
+        .isLessThan(alu_is_less_than)
     );
     wire temp_ready, temp_exception;
     wire [31:0] temp_result;

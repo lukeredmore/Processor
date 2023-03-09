@@ -1,6 +1,6 @@
-Reg:  1 Expected:          10 Actual:           6
-Reg:  2 Expected:           5 Actual:           1
-Reg:  3 Expected:          10 Actual:           2
-Reg: 11 Expected:          19 Actual:           3
-Reg: 21 Expected:           0 Actual:           7
+Reg:  1 Expected:          10 Actual:          31
+Reg:  2 Expected:           5 Actual:          27
+Reg:  3 Expected:          10 Actual:          52
+Reg:  4 Expected:           1 Actual:           0
+Reg: 11 Expected:          19 Actual:           1
 Reg: 30 Expected:          10 Actual:           0

@@ -27,7 +27,7 @@ module FD(
         .clr(reset));
 
     wire sw, jr, bne, blt;
-    instruction_decoder DX_Decoder(
+    instruction_decoder FD_Decoder(
         .instruction(IR),
         .jr(jr),
         .bne(bne),
@@ -49,6 +49,7 @@ module DX(
     output ctrlX_startDiv,
     output ctrlX_setPCtoOin,
     output ctrlX_isBNE,
+    output ctrlX_isBLT,
 
     input [31:0] IR_in,
     input [31:0] PC_in,
@@ -86,7 +87,7 @@ module DX(
         .in_enable(1'b1), 
         .clr(reset));
 
-    wire addi, sw, lw, mul, div, jal, bne;
+    wire addi, sw, lw, mul, div, jal, bne, blt;
     instruction_decoder DX_Decoder(
         .instruction(IR),
         .addi(addi),
@@ -95,6 +96,7 @@ module DX(
         .div(div),
         .jal(jal),
         .bne(bne),
+        .blt(blt),
         .lw(lw));
 
     assign ctrlX_ALUsImm = addi | sw | lw;
@@ -102,6 +104,7 @@ module DX(
     assign ctrlX_startDiv = div;
     assign ctrlX_setPCtoOin = jal;
     assign ctrlX_isBNE = bne;
+    assign ctrlX_isBLT = blt;
 endmodule
 
 module XM(
