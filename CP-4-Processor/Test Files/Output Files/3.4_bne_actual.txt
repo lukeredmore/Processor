@@ -2,11 +2,8 @@ Cycle  10: Wrote 4 into register 1
 Cycle  11: Wrote 5 into register 2
 Cycle  14: Wrote -4 into register 3
 Cycle  15: Wrote -5 into register 4
-Cycle  22: Wrote 1 into register 20
-Cycle  23: Wrote 2 into register 20
-Cycle  24: Wrote 3 into register 20
-Cycle  25: Wrote 1 into register 10
-Cycle  30: Wrote 2 into register 10
+Cycle  22: Wrote 1 into register 10
+Cycle  27: Wrote 2 into register 10
 ============== Testing Mode ==============
 Reg  0:           0
 Reg  1:           4
@@ -28,7 +25,7 @@ Reg 16:           0
 Reg 17:           0
 Reg 18:           0
 Reg 19:           0
-Reg 20:           3
+Reg 20:           0
 Reg 21:           0
 Reg 22:           0
 Reg 23:           0

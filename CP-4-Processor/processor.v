@@ -62,15 +62,15 @@ module processor(
 	input [31:0] data_readRegA, data_readRegB;
 
     // Program Counter
-	wire [31:0] PC, PC_inc, PC_in, PC_in_bp;
+	wire [31:0] PC, PC_inc, PC_in, PC_in_bp, PC_branched;
     assign address_imem = PC;
-    wire stall, ctrlD_PCinToRegFileOut;
+    wire stall, ctrlD_PCinToRegFileOut, shouldBranch;
     assign PC_in = q_imem[31:27] == 1 || q_imem[31:27] == 3 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? PC_in_bp : PC_inc);
 	register_32 ProgramCounter(
         // out
        .data_out(PC), 
        // in
-       .data_in(PC_in), 
+       .data_in(shouldBranch ? PC_branched : PC_in), 
        .clk(~clock), // falling edge
        .in_enable(~stall), 
        .clr(reset)
@@ -111,7 +111,7 @@ module processor(
 
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out, A_X_Bp, B_X_Bp;
-    wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv, ctrlX_setPCtoOin;
+    wire ctrlX_ALUsImm, ctrlX_startMult,ctrlX_startDiv, ctrlX_setPCtoOin, ctrlX_isBNE, ctrlX_isBLT;
     DX DXLatch(
         // Out
         .IR(IR_X),
@@ -122,6 +122,7 @@ module processor(
         .ctrlX_startMult(ctrlX_startMult),
         .ctrlX_startDiv(ctrlX_startDiv),
         .ctrlX_setPCtoOin(ctrlX_setPCtoOin),
+        .ctrlX_isBNE(ctrlX_isBNE),
         // In
         .IR_in(stall ? {32'b0} : IR_D),
         .PC_in(PC_D),
@@ -132,12 +133,23 @@ module processor(
     );
     wire [31:0] Imm_SE_X;
     sign_extender_17 SE_X(.extended(Imm_SE_X), .in_17(IR_X[16:0]));
+    cla_32 PCBranchDest(
+        // out
+        .S(PC_branched), 
+        // in
+        .A(PC_X),
+        .B(Imm_SE_X),
+        .Cin(1'b0)
+    );
+    assign shouldBranch = alu_is_not_equal && ctrlX_isBNE;
+    wire alu_is_not_equal;
     alu ALU(
         .data_operandA(A_X_Bp), 
         .data_operandB(ctrlX_ALUsImm ? Imm_SE_X : B_X_Bp), 
         .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
-        .data_result(ALU_out)
+        .data_result(ALU_out),
+        .isNotEqual(alu_is_not_equal)
     );
     wire temp_ready, temp_exception;
     wire [31:0] temp_result;

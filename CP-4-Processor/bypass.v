@@ -53,7 +53,7 @@ module bypass(
 
     assign DX_out_B = X_Rt == M_Rd && X_Rt != 0
         ? M_O :
-        (X_Rt == W_Rd && X_Rs > 0 && ~W_sw
+        (X_Rt == W_Rd && X_Rt != 0 && ~W_sw
             ? Regfile_in : X_B);
 
     //only matters for sw instruction

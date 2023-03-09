@@ -26,13 +26,15 @@ module FD(
         .in_enable(write_enable), 
         .clr(reset));
 
-    wire sw, jr;
+    wire sw, jr, bne, blt;
     instruction_decoder DX_Decoder(
         .instruction(IR),
         .jr(jr),
+        .bne(bne),
+        .blt(blt),
         .sw(sw));
 
-    assign ctrlD_FetchRdInsteadOfRt = sw | jr;
+    assign ctrlD_FetchRdInsteadOfRt = sw | jr | bne | blt;
     assign ctrlD_PCinToRegFileOut = jr;
     assign ctrlD_insertNopInF = jr;
 endmodule
@@ -46,6 +48,7 @@ module DX(
     output ctrlX_startMult,
     output ctrlX_startDiv,
     output ctrlX_setPCtoOin,
+    output ctrlX_isBNE,
 
     input [31:0] IR_in,
     input [31:0] PC_in,
@@ -83,7 +86,7 @@ module DX(
         .in_enable(1'b1), 
         .clr(reset));
 
-    wire addi, sw, lw, mul, div, jal;
+    wire addi, sw, lw, mul, div, jal, bne;
     instruction_decoder DX_Decoder(
         .instruction(IR),
         .addi(addi),
@@ -91,12 +94,14 @@ module DX(
         .mul(mul),
         .div(div),
         .jal(jal),
+        .bne(bne),
         .lw(lw));
 
     assign ctrlX_ALUsImm = addi | sw | lw;
     assign ctrlX_startMult = mul;
     assign ctrlX_startDiv = div;
     assign ctrlX_setPCtoOin = jal;
+    assign ctrlX_isBNE = bne;
 endmodule
 
 module XM(

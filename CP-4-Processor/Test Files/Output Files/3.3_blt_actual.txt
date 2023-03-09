@@ -1,7 +1,7 @@
 Cycle  10: Wrote 4 into register 1
 Cycle  11: Wrote 5 into register 2
-Cycle  12: Wrote 0 into register 3
-Cycle  13: Wrote 0 into register 4
+Cycle  12: Wrote -4 into register 3
+Cycle  13: Wrote -5 into register 4
 Cycle  20: Wrote 1 into register 20
 Cycle  21: Wrote 2 into register 20
 Cycle  22: Wrote 3 into register 20
@@ -21,8 +21,8 @@ Cycle  54: Wrote 6 into register 10
 Reg  0:           0
 Reg  1:           4
 Reg  2:           5
-Reg  3:           0
-Reg  4:           0
+Reg  3:          -4
+Reg  4:          -5
 Reg  5:           0
 Reg  6:           0
 Reg  7:           0
