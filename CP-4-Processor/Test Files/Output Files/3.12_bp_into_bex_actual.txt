@@ -1,3 +1,5 @@
+Cycle   9: Wrote 0 into register 30
+Cycle  11: Wrote 10 into register 30
 Cycle  13: Wrote 1 into register 20
 Cycle  14: Wrote 2 into register 20
 Cycle  15: Wrote 3 into register 20
@@ -35,5 +37,5 @@ Reg 26:           0
 Reg 27:           0
 Reg 28:           0
 Reg 29:           0
-Reg 30:           0
+Reg 30:          10
 Reg 31:           0

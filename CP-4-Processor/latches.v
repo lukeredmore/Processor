@@ -4,6 +4,7 @@ module FD(
     output ctrlD_FetchRdInsteadOfRt,
     output ctrlD_PCinToRegFileOut,
     output ctrlD_insertNopInF,
+    output ctrlD_readR30,
     
     input write_enable,
     input [31:0] IR_in,
@@ -26,17 +27,19 @@ module FD(
         .in_enable(write_enable), 
         .clr(reset));
 
-    wire sw, jr, bne, blt;
+    wire sw, jr, bne, blt, bex;
     instruction_decoder FD_Decoder(
         .instruction(IR),
         .jr(jr),
         .bne(bne),
         .blt(blt),
+        .bex(bex),
         .sw(sw));
 
     assign ctrlD_FetchRdInsteadOfRt = sw | jr | bne | blt;
     assign ctrlD_PCinToRegFileOut = jr;
     assign ctrlD_insertNopInF = jr;
+    assign ctrlD_readR30 = bex;
 endmodule
 
 module DX(
@@ -155,6 +158,7 @@ module MW(
     output ctrlW_RegInToMemOut,
     output ctrlW_RegfileWe,
     output ctrlW_WriteToR31,
+    output ctrlW_WriteToR30,
 
     input [31:0] IR_in,
     input [31:0] O_in,
@@ -196,6 +200,7 @@ module MW(
     assign ctrlW_RegInToMemOut = lw;
     assign ctrlW_RegfileWe = lw || alu || jal || setx || addi;
     assign ctrlW_WriteToR31 = jal;
+    assign ctrlW_WriteToR30 = setx;
 endmodule
 
 module PW(

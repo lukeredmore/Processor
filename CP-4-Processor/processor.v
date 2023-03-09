@@ -65,7 +65,7 @@ module processor(
 	wire [31:0] PC, PC_inc, PC_in, PC_in_bp, PC_branched;
     assign address_imem = PC;
     wire stall, ctrlD_PCinToRegFileOut, shouldBranch;
-    assign PC_in = q_imem[31:27] == 1 || q_imem[31:27] == 3 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? PC_in_bp : PC_inc);
+    assign PC_in = shouldBEX ? IR_D[26:0] : q_imem[31:27] == 1 || q_imem[31:27] == 3 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? PC_in_bp : PC_inc);
 	register_32 ProgramCounter(
         // out
        .data_out(PC), 
@@ -86,7 +86,7 @@ module processor(
 
     // FD Latch
     wire [31:0] IR_D, PC_D;
-    wire ctrlD_FetchRdInsteadOfRt, ctrlD_insertNopInF;
+    wire ctrlD_FetchRdInsteadOfRt, ctrlD_insertNopInF, ctrlD_readR30, shouldBEX;
     FD FDLatch(
         // Out
         .IR(IR_D),
@@ -94,15 +94,17 @@ module processor(
         .ctrlD_FetchRdInsteadOfRt(ctrlD_FetchRdInsteadOfRt),
         .ctrlD_PCinToRegFileOut(ctrlD_PCinToRegFileOut),
         .ctrlD_insertNopInF(ctrlD_insertNopInF),
+        .ctrlD_readR30(ctrlD_readR30),
         // In
         .write_enable(~stall),
-        .IR_in(ctrlD_insertNopInF ? {32'b0} : q_imem),
+        .IR_in(ctrlD_insertNopInF || shouldBEX ? {32'b0} : q_imem),
         .PC_in(PC_inc),
         .clock(clock),
         .reset(reset)
     );
-    assign ctrl_readRegA = IR_D[21:17]; // $rs
+    assign ctrl_readRegA = ctrlD_readR30 ? {5'b11110} : IR_D[21:17]; // $rs
     assign ctrl_readRegB = ctrlD_FetchRdInsteadOfRt ? IR_D[26:22] : IR_D[16:12]; // $rd || $rt
+    assign shouldBEX = ctrlD_readR30 && data_readRegA != 0;
 
     wire RdBeingWrittenToAhead, RtBeingWrittenToAhead, RsBeingWrittenToAhead, loadOutputToALUInput;
     assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M > 0 && IR_D[26:22] == IR_M[26:22]);
@@ -217,7 +219,7 @@ module processor(
 
     // MW Latch
     wire [31:0] O_W, D_W, IR_W;
-    wire ctrlW_RegInToMemOut, ctrlW_RegfileWe, ctrlW_WriteToR31;
+    wire ctrlW_RegInToMemOut, ctrlW_RegfileWe, ctrlW_WriteToR31, ctrlW_WriteToR30;
     MW MWLatch(
         // Out
         .IR(IR_W),
@@ -226,6 +228,7 @@ module processor(
         .ctrlW_RegInToMemOut(ctrlW_RegInToMemOut),
         .ctrlW_RegfileWe(ctrlW_RegfileWe),
         .ctrlW_WriteToR31(ctrlW_WriteToR31),
+        .ctrlW_WriteToR30(ctrlW_WriteToR30),
         // In
         .IR_in(IR_M),
         .O_in(O_M),
@@ -233,8 +236,8 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
-    assign ctrl_writeReg = ctrlW_WriteToR31 ? {5'b11111} : (ctrlPW_RegInToPOut && temp_ready ? IR_PW[26:22] : IR_W[26:22]);
-    assign data_writeReg = ctrlPW_RegInToPOut && temp_ready ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
+    assign ctrl_writeReg = ctrlW_WriteToR30 ? {5'b11110} : ctrlW_WriteToR31 ? {5'b11111} : (ctrlPW_RegInToPOut && temp_ready ? IR_PW[26:22] : IR_W[26:22]);
+    assign data_writeReg = ctrlW_WriteToR30 ? IR_W[26:0] : ctrlPW_RegInToPOut && temp_ready ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
     assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
 
     wire [31:0] B_M_Bp;

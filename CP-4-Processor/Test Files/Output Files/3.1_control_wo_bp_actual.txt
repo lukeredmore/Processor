@@ -32,28 +32,25 @@ Cycle  94: Wrote 11 into register 11
 Cycle  95: Wrote 0 into register 21
 Cycle  96: Wrote 0 into register 10
 Cycle  97: Wrote 0 into register 20
+Cycle 100: Wrote 0 into register 30
 Cycle 107: Wrote 1 into register 10
-Cycle 115: Wrote 1 into register 20
-Cycle 116: Wrote 2 into register 20
-Cycle 117: Wrote 3 into register 20
-Cycle 118: Wrote 2 into register 10
-Cycle 121: Wrote 13 into register 11
-Cycle 122: Wrote 3 into register 21
-Cycle 123: Wrote 0 into register 10
-Cycle 124: Wrote 0 into register 20
-Cycle 128: Wrote 1 into register 20
-Cycle 129: Wrote 2 into register 20
-Cycle 132: Wrote 1 into register 10
-Cycle 139: Wrote 3 into register 20
-Cycle 140: Wrote 4 into register 20
-Cycle 144: Wrote 2 into register 10
-Cycle 151: Wrote 185 into register 31
-Cycle 154: Wrote 5 into register 20
-Cycle 155: Wrote 6 into register 20
-Cycle 161: Wrote 15 into register 11
-Cycle 162: Wrote 9 into register 21
-Cycle 163: Wrote 0 into register 10
-Cycle 164: Wrote 0 into register 20
+Cycle 109: Wrote 10 into register 30
+Cycle 114: Wrote 2 into register 10
+Cycle 117: Wrote 13 into register 11
+Cycle 118: Wrote 0 into register 21
+Cycle 119: Wrote 0 into register 10
+Cycle 120: Wrote 0 into register 20
+Cycle 124: Wrote 1 into register 20
+Cycle 125: Wrote 2 into register 20
+Cycle 128: Wrote 1 into register 10
+Cycle 135: Wrote 3 into register 20
+Cycle 136: Wrote 4 into register 20
+Cycle 140: Wrote 2 into register 10
+Cycle 147: Wrote 185 into register 31
+Cycle 153: Wrote 15 into register 11
+Cycle 154: Wrote 4 into register 21
+Cycle 155: Wrote 0 into register 10
+Cycle 156: Wrote 0 into register 20
 ============== Testing Mode ==============
 Reg  0:           0
 Reg  1:           4
@@ -76,7 +73,7 @@ Reg 17:           0
 Reg 18:           0
 Reg 19:           0
 Reg 20:           0
-Reg 21:           9
+Reg 21:           4
 Reg 22:           0
 Reg 23:           0
 Reg 24:           0
@@ -85,5 +82,5 @@ Reg 26:           0
 Reg 27:           0
 Reg 28:           0
 Reg 29:           0
-Reg 30:           0
+Reg 30:          10
 Reg 31:         185
