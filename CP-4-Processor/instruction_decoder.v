@@ -1,6 +1,6 @@
 module instruction_decoder(
     input [31:0] instruction,
-    output alu, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx,
+    output alu, add, sub, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx,
     output [1:0] type, // 0 = R, 1 = I, 2 = JI, 3 = JII
     output [4:0] Rs, Rd, Rt
 );
@@ -10,6 +10,8 @@ module instruction_decoder(
     assign alu_op = instruction[6:2];
 
     assign alu = opcode == 0;
+    assign add = alu & alu_op == 0;
+    assign sub = alu & alu_op == 1;
     assign mul = alu & alu_op == 6;
     assign div = alu & alu_op == 7;
     assign j = opcode == 1;

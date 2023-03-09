@@ -145,13 +145,14 @@ module processor(
         .Cin(1'b0)
     );
     assign shouldBranch = alu_is_not_equal && ctrlX_isBNE || alu_is_less_than && ctrlX_isBLT;
-    wire alu_is_not_equal, alu_is_less_than;
+    wire alu_is_not_equal, alu_is_less_than, alu_overflow;
     alu ALU(
         .data_operandA(ctrlX_isBLT ? B_X_Bp : A_X_Bp), 
         .data_operandB(ctrlX_isBLT ? A_X_Bp : ctrlX_ALUsImm ? Imm_SE_X : B_X_Bp), 
         .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : ctrlX_isBLT ? 5'b1 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out),
+        .overflow(alu_overflow),
         .isNotEqual(alu_is_not_equal),
         .isLessThan(alu_is_less_than)
     );
@@ -200,7 +201,8 @@ module processor(
     assign stall = ctrlX_startMult | ctrlX_startDiv | multdiv_operating | loadOutputToALUInput | (ctrlD_PCinToRegFileOut && RdBeingWrittenToAhead);
 
     // XM Latch
-    wire [31:0] O_M, B_M, IR_M;
+    wire [31:0] O_M, B_M, IR_M, exception_value;
+    assign exception_value = IR_X[31:27] == 5 ? 2 : IR_X[6:2] == 0 & IR_X[31:27] == 0 ? 1 : IR_X[6:2] == 1 & IR_X[31:27] == 0 ? 3 : 32'bX;
     XM XMLatch(
         // Out
         .IR(IR_M),
@@ -211,6 +213,7 @@ module processor(
         .IR_in(IR_X),
         .O_in(ctrlX_setPCtoOin ? PC_X : ALU_out),
         .B_in(B_X),
+        .exception_value(alu_overflow ? exception_value : 32'b0),
         .clock(clock),
         .reset(reset)
     );
