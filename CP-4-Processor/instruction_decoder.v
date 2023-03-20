@@ -1,8 +1,9 @@
 module instruction_decoder(
     input [31:0] instruction,
-    output alu, add, sub, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx,
+    output alu, add, sub, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx, modifies_reg, needsAluOpA, needsAluOpB,
     output [1:0] type, // 0 = R, 1 = I, 2 = JI, 3 = JII
-    output [4:0] Rs, Rd, Rt
+    output [4:0] Rs, Rd, Rt,
+    output [4:0] modifying_reg, dependency_reg_A, dependency_reg_B
 );
 
     wire [4:0] opcode, alu_op;
@@ -30,4 +31,12 @@ module instruction_decoder(
     assign Rd = instruction[26:22];
     assign Rs = instruction[21:17];
     assign Rt = instruction[16:12];
+
+    assign modifies_reg = (alu | addi | lw | jal | setx) & modifying_reg != 0;
+    assign modifying_reg = jal ? 5'd31 : setx ? 5'd30 : Rd;
+    assign dependency_reg_A = bex ? 5'd30 : Rs;
+    assign dependency_reg_B = bne | blt | jr ? Rd : Rt;
+
+    assign needsAluOpA = alu | addi | sw | lw | bne | blt | bex;
+    assign needsAluOpB = (alu & alu_op != 8 & alu_op != 9) | bne | jr | blt;
 endmodule

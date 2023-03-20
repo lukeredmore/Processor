@@ -124,8 +124,8 @@ module XM(
     input clock,
     input reset);
 
-    wire [31:0] exception_instruction, exception_value;
-    assign exception_instruction = 125829120;
+    wire [31:0] exception_instruction;
+    assign exception_instruction = {{5'b10101}, exception_value[26:0]};
     register_32 XM_InstructionRegister(
         .data_out(IR), 
         .data_in(exception_value != 0 ? exception_instruction : IR_in), 
@@ -135,7 +135,7 @@ module XM(
 
     register_32 XM_ORegister(
         .data_out(O), 
-        .data_in(exception_value != 0 ? exception_value : O_in), 
+        .data_in(O_in), 
         .clk(~clock), // Falling edge
         .in_enable(1'b1), 
         .clr(reset));

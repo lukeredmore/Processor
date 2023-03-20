@@ -40,15 +40,11 @@ Cycle 117: Wrote 13 into register 11
 Cycle 118: Wrote 0 into register 21
 Cycle 119: Wrote 0 into register 10
 Cycle 120: Wrote 0 into register 20
-Cycle 124: Wrote 1 into register 20
-Cycle 125: Wrote 2 into register 20
 Cycle 128: Wrote 1 into register 10
-Cycle 135: Wrote 3 into register 20
-Cycle 136: Wrote 4 into register 20
 Cycle 140: Wrote 2 into register 10
 Cycle 147: Wrote 185 into register 31
 Cycle 153: Wrote 15 into register 11
-Cycle 154: Wrote 4 into register 21
+Cycle 154: Wrote 0 into register 21
 Cycle 155: Wrote 0 into register 10
 Cycle 156: Wrote 0 into register 20
 ============== Testing Mode ==============
@@ -73,7 +69,7 @@ Reg 17:           0
 Reg 18:           0
 Reg 19:           0
 Reg 20:           0
-Reg 21:           4
+Reg 21:           0
 Reg 22:           0
 Reg 23:           0
 Reg 24:           0

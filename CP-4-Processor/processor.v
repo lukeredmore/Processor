@@ -97,7 +97,7 @@ module processor(
         .ctrlD_readR30(ctrlD_readR30),
         // In
         .write_enable(~stall),
-        .IR_in(ctrlD_insertNopInF || shouldBEX ? {32'b0} : q_imem),
+        .IR_in(ctrlD_insertNopInF || shouldBEX || shouldBranch ? {32'b0} : q_imem),
         .PC_in(PC_inc),
         .clock(clock),
         .reset(reset)
@@ -127,7 +127,7 @@ module processor(
         .ctrlX_isBNE(ctrlX_isBNE),
         .ctrlX_isBLT(ctrlX_isBLT),
         // In
-        .IR_in(stall ? {32'b0} : IR_D),
+        .IR_in(stall || shouldBranch ? {32'b0} : IR_D),
         .PC_in(PC_D),
         .A_in(data_readRegA),
         .B_in(data_readRegB),
