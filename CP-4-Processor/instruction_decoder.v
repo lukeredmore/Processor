@@ -3,12 +3,14 @@ module instruction_decoder(
     output alu, add, sub, addi, mul, div, sw, lw, j, bne, jal, jr, blt, bex, setx, modifies_reg, needsAluOpA, needsAluOpB,
     output [1:0] type, // 0 = R, 1 = I, 2 = JI, 3 = JII
     output [4:0] Rs, Rd, Rt,
+    output [26:0] T,
     output [4:0] modifying_reg, dependency_reg_A, dependency_reg_B
 );
 
     wire [4:0] opcode, alu_op;
     assign opcode = instruction[31:27];
     assign alu_op = instruction[6:2];
+    assign T = instruction[26:0];
 
     assign alu = opcode == 0;
     assign add = alu & alu_op == 0;

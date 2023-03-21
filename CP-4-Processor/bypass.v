@@ -32,12 +32,15 @@ module bypass(
 
     wire [1:0] M_type; // 0 = R, 1 = I, 2 = JI, 3 = JII
     wire [4:0] M_Rs, M_Rd, M_Rt, M_mod;
-    wire M_blt, M_modifies;
+    wire M_blt, M_modifies, M_setx;
+    wire [26:0] M_T;
     instruction_decoder MDecoder(
         .instruction(IR_M),
         .type(M_type),
         .modifying_reg(M_mod),
         .modifies_reg(M_modifies),
+        .setx(M_setx),
+        .T(M_T),
         .Rs(M_Rs),
         .blt(M_blt),
         .Rd(M_Rd),
@@ -61,7 +64,7 @@ module bypass(
 
     assign DX_out_A = X_needsAluOpA 
         ? (X_dep_1 == M_mod & M_modifies // input to alu is currently in M stage, intercept it
-            ? M_O
+            ? (M_setx ? {5'b0, M_T} : M_O)
             : X_dep_1 == W_mod & W_modifies // input to alu is currently being written to regfile, intercept it
                 ? Regfile_in
                 : X_A)
@@ -69,7 +72,7 @@ module bypass(
     
     assign DX_out_B = X_needsAluOpB
         ? (X_dep_2 == M_mod & M_modifies // input to alu is currently in M stage, intercept it
-            ? M_O
+            ? (M_setx ? {5'b0, M_T} : M_O)
             : X_dep_2 == W_mod & W_modifies // input to alu is currently being written to regfile, intercept it
                 ? Regfile_in
                 : X_B)

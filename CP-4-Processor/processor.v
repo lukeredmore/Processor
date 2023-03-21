@@ -168,8 +168,13 @@ module processor(
         .data_exception(temp_exception),
         .data_result(temp_result)
     );
-    wire [31:0] P_PW, IR_PW;
+    wire [31:0] P_PW, IR_PW, mul_div_exception_value;
     wire ctrlPW_RegInToPOut, ctrlPW_RegfileWe, multdiv_operating;
+    assign mul_div_exception_value = IR_PW[6:2] == 6 & IR_PW[31:27] == 0 //mult
+        ? 4
+        : IR_PW[6:2] == 7 & IR_PW[31:27] == 0 //div
+            ? 5
+            : 32'bX;
     PW PWLatch(
         // Out
         .IR(IR_PW),
@@ -239,8 +244,22 @@ module processor(
         .clock(clock),
         .reset(reset)
     );
-    assign ctrl_writeReg = ctrlW_WriteToR30 ? {5'b11110} : ctrlW_WriteToR31 ? {5'b11111} : (ctrlPW_RegInToPOut && temp_ready ? IR_PW[26:22] : IR_W[26:22]);
-    assign data_writeReg = ctrlW_WriteToR30 ? IR_W[26:0] : ctrlPW_RegInToPOut && temp_ready ? P_PW : (ctrlW_RegInToMemOut ? D_W : O_W);
+    assign ctrl_writeReg = ctrlW_WriteToR30 
+        ? {5'b11110} 
+        : ctrlW_WriteToR31 
+            ? {5'b11111} 
+            : (ctrlPW_RegInToPOut && temp_ready 
+                ? temp_exception 
+                    ? {5'b11110} 
+                    : IR_PW[26:22] 
+                : IR_W[26:22]);
+    assign data_writeReg = ctrlW_WriteToR30 
+        ? IR_W[26:0] 
+        : ctrlPW_RegInToPOut && temp_ready 
+            ? temp_exception 
+                ? mul_div_exception_value 
+                : P_PW 
+            : (ctrlW_RegInToMemOut ? D_W : O_W);
     assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
 
     wire [31:0] B_M_Bp;
