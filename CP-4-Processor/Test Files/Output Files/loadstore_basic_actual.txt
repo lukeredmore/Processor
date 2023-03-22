@@ -1,5 +1,7 @@
 Cycle  10: Wrote 12 into register 1
 Cycle  11: Wrote 3 into register 3
+Cycle  13: Wrote 12 into MEM[0]
+Cycle  14: Wrote 3 into MEM[1]
 Cycle  19: Wrote 12 into register 10
 Cycle  20: Wrote 3 into register 5
 Cycle  24: Wrote 24 into register 11

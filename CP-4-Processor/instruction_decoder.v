@@ -37,7 +37,7 @@ module instruction_decoder(
     assign modifies_reg = (alu | addi | lw | jal | setx) & modifying_reg != 0;
     assign modifying_reg = jal ? 5'd31 : setx ? 5'd30 : Rd;
     assign dependency_reg_A = bex ? 5'd30 : Rs;
-    assign dependency_reg_B = bne | blt | jr ? Rd : Rt;
+    assign dependency_reg_B = bne | blt | jr | sw ? Rd : Rt;
 
     assign needsAluOpA = alu | addi | sw | lw | bne | blt | bex;
     assign needsAluOpB = (alu & alu_op != 8 & alu_op != 9) | bne | jr | blt;

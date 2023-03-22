@@ -31,7 +31,7 @@ module bypass(
     );
 
     wire [1:0] M_type; // 0 = R, 1 = I, 2 = JI, 3 = JII
-    wire [4:0] M_Rs, M_Rd, M_Rt, M_mod;
+    wire [4:0] M_Rs, M_Rd, M_Rt, M_mod, M_dep_2;
     wire M_blt, M_modifies, M_setx;
     wire [26:0] M_T;
     instruction_decoder MDecoder(
@@ -40,6 +40,7 @@ module bypass(
         .modifying_reg(M_mod),
         .modifies_reg(M_modifies),
         .setx(M_setx),
+        .dependency_reg_B(M_dep_2),
         .T(M_T),
         .Rs(M_Rs),
         .blt(M_blt),
@@ -79,5 +80,5 @@ module bypass(
         : X_B;
 
     //only matters for sw instruction
-    assign XM_out_B = W_Rd == M_Rd && M_Rd != 0 ? Regfile_in : M_B;
+    assign XM_out_B = W_modifies && W_mod == M_dep_2 ? Regfile_in : M_B;
 endmodule

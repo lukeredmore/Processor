@@ -65,7 +65,13 @@ module processor(
 	wire [31:0] PC, PC_inc, PC_in, PC_in_bp, PC_branched;
     assign address_imem = PC;
     wire stall, ctrlD_PCinToRegFileOut, shouldBranch;
-    assign PC_in = shouldBEX ? IR_D[26:0] : q_imem[31:27] == 1 || q_imem[31:27] == 3 ? q_imem[26:0] : (ctrlD_PCinToRegFileOut ? PC_in_bp : PC_inc);
+    assign PC_in = shouldBEX 
+        ? IR_D[26:0] 
+        : ctrlD_PCinToRegFileOut
+            ? PC_in_bp
+            : q_imem[31:27] == 1 || q_imem[31:27] == 3 //j or jal
+                ? q_imem[26:0] 
+                : PC_inc;
 	register_32 ProgramCounter(
         // out
        .data_out(PC), 
@@ -83,6 +89,9 @@ module processor(
         .B(32'b1),
         .Cin(1'b0)
     );
+
+    // for testing only
+    instruction_decoder QIMEMDECODER(.instruction(q_imem));
 
     // FD Latch
     wire [31:0] IR_D, PC_D;
@@ -149,7 +158,7 @@ module processor(
     alu ALU(
         .data_operandA(ctrlX_isBLT ? B_X_Bp : A_X_Bp), 
         .data_operandB(ctrlX_isBLT ? A_X_Bp : ctrlX_ALUsImm ? Imm_SE_X : B_X_Bp), 
-        .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : ctrlX_isBLT ? 5'b1 : IR_X[6:2]), 
+        .ctrl_ALUopcode(ctrlX_ALUsImm ? 5'b0 : ctrlX_isBLT | ctrlX_isBNE ? 5'b1 : IR_X[6:2]), 
         .ctrl_shiftamt(IR_X[11:7]),
         .data_result(ALU_out),
         .overflow(alu_overflow),

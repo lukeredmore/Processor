@@ -4,6 +4,9 @@ Cycle  12: Wrote 3 into register 1
 Cycle  13: Wrote 21 into register 2
 Cycle  14: Wrote -1 into register 3
 Cycle  15: Wrote -35 into register 4
+Cycle  17: Wrote 3 into MEM[1]
+Cycle  18: Wrote 21 into MEM[2]
+Cycle  19: Wrote -1 into MEM[3]
 Cycle  21: Wrote 3 into register 16
 Cycle  22: Wrote 21 into register 17
 Cycle  23: Wrote -1 into register 18
