@@ -1,0 +1,42 @@
+Cycle   8: Wrote 8 into register 1
+Cycle   8: Wrote 8 into MEM[0]
+Cycle  13: Wrote 8 into register 2
+Cycle  15: Wrote 16 into register 3
+Cycle  15: Wrote 16 into MEM[1]
+Cycle  20: Wrote 16 into register 4
+Cycle  25: Wrote 1 into register 5
+Cycle  29: Wrote 8 into register 7
+Cycle  34: Wrote 1 into register 8
+============== Testing Mode ==============
+Reg  0:           0
+Reg  1:           8
+Reg  2:           8
+Reg  3:          16
+Reg  4:          16
+Reg  5:           1
+Reg  6:           0
+Reg  7:           8
+Reg  8:           1
+Reg  9:           0
+Reg 10:           0
+Reg 11:           0
+Reg 12:           0
+Reg 13:           0
+Reg 14:           0
+Reg 15:           0
+Reg 16:           0
+Reg 17:           0
+Reg 18:           0
+Reg 19:           0
+Reg 20:           0
+Reg 21:           0
+Reg 22:           0
+Reg 23:           0
+Reg 24:           0
+Reg 25:           0
+Reg 26:           0
+Reg 27:           0
+Reg 28:           0
+Reg 29:           0
+Reg 30:           0
+Reg 31:           0

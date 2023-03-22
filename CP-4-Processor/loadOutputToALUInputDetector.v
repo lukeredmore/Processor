@@ -4,29 +4,25 @@ module loadOutputToALUInputDetector(
     output loadOutputToALUInput
 );
 
-    wire [1:0] D_type; // 0 = R, 1 = I, 2 = JI, 3 = JII
-    wire [4:0] D_Rs, D_Rd, D_Rt;
+    wire [4:0] D_dep1, D_dep2;
     wire D_sw;
     instruction_decoder DDecoder(
         .instruction(IR_D),
         .sw(D_sw),
-        .type(D_type),
-        .Rs(D_Rs),
-        .Rd(D_Rd),
-        .Rt(D_Rt)
+        .dependency_reg_A(D_dep1), 
+        .dependency_reg_B(D_dep2)
     );
 
-    wire [1:0] X_type; // 0 = R, 1 = I, 2 = JI, 3 = JII
-    wire [4:0] X_Rs, X_Rd, X_Rt;
+    wire [4:0] X_mod;
     wire X_lw;
     instruction_decoder XDecoder(
         .instruction(IR_X),
         .lw(X_lw),
-        .type(X_type),
-        .Rs(X_Rs),
-        .Rd(X_Rd),
-        .Rt(X_Rt)
+        .modifying_reg(X_mod)
     );
 
-    assign loadOutputToALUInput = X_lw && (D_Rs == X_Rd || (D_Rt == X_Rd && ~D_sw));
+    assign loadOutputToALUInput = X_lw 
+        && (D_dep1 == X_mod //D has a dependency a in x
+            || (D_dep2 == X_mod && ~D_sw) //D has a dependency b in x and D isn't a sw
+    );
 endmodule

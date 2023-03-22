@@ -53,13 +53,11 @@ lw $t3, 0($t6)              # $t3 = current.next.data
 blt $t2, $t3, sinext
 addi $t7, $zero, 1          # $t7 = 1
 lw $t4, 1($t1)              # $t4 = current.prev
-nop
 bne $t4, $zero, supprev
 j supprevd
 supprev: sw $t6, 2($t4)              # current.prev.next = current.next
 supprevd: sw $t4, 1($t6)              # current.next.prev = current.prev
 lw $t5, 2($t6)              # $t5 = current.next.next
-nop
 bne $t5, $zero, supnnprev
 j supnnprevd
 supnnprev: sw $t1, 1($t5)              # current.next.next.prev = current
@@ -70,7 +68,6 @@ bne $t0, $t1, sinext
 add $t0, $t6, $zero         # head = current.next
 sinext: add $t1, $t6, $zero         # $t1 = current.next
 siguard: lw $t6, 2($t1)              # $t6 = current.next
-nop
 bne $t6, $zero, sortiter
 add $a0, $t0, $zero
 bne $t7, $zero, sortrecur
@@ -92,7 +89,6 @@ add $t5, $t5, $t2
 sll $t6, $t6, 3
 add $t6, $t6, $t5
 lw $t1, 2($t1)
-nop
 procguard: bne $t1, $zero, proclist
 stop: nop
 nop

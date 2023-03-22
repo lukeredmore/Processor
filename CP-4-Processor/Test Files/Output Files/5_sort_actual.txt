@@ -10,8 +10,8 @@ Cycle  15: Wrote 4 into MEM[52]
 Cycle  17: Wrote 2 into register 9
 Cycle  17: Wrote 2 into MEM[53]
 Cycle  19: Wrote 50 into register 4
-Cycle  21: Wrote 81 into register 31
-Cycle  21: Wrote 81 into MEM[256]
+Cycle  21: Wrote 78 into register 31
+Cycle  21: Wrote 78 into MEM[256]
 Cycle  23: Wrote 257 into register 29
 Cycle  24: Wrote 50 into register 8
 Cycle  25: Wrote 0 into register 9
@@ -67,11 +67,11 @@ Cycle 112: Wrote 0 into register 10
 Cycle 113: Wrote 3828 into register 9
 Cycle 115: Wrote 3837 into register 2
 Cycle 116: Wrote 256 into register 29
-Cycle 117: Wrote 81 into register 31
+Cycle 117: Wrote 78 into register 31
 Cycle 122: Wrote 3837 into register 8
 Cycle 123: Wrote 3837 into register 4
-Cycle 124: Wrote 84 into register 31
-Cycle 124: Wrote 84 into MEM[256]
+Cycle 124: Wrote 81 into register 31
+Cycle 124: Wrote 81 into MEM[256]
 Cycle 126: Wrote 257 into register 29
 Cycle 127: Wrote 0 into register 15
 Cycle 128: Wrote 3837 into register 8
@@ -164,7 +164,7 @@ Cycle 346: Wrote 0 into register 14
 Cycle 349: Wrote 3834 into register 4
 Cycle 351: Wrote 3834 into register 2
 Cycle 352: Wrote 256 into register 29
-Cycle 353: Wrote 84 into register 31
+Cycle 353: Wrote 81 into register 31
 Cycle 358: Wrote 3834 into register 8
 Cycle 359: Wrote 0 into register 13
 Cycle 360: Wrote 0 into register 14
@@ -221,4 +221,4 @@ Reg 27:        3828
 Reg 28:           0
 Reg 29:         256
 Reg 30:           0
-Reg 31:          84
+Reg 31:          81
