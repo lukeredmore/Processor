@@ -113,7 +113,7 @@ module processor(
     assign shouldBEX = ctrlD_readR30 && data_readRegA != 0;
 
     wire RdBeingWrittenToAhead, loadOutputToALUInput;
-    assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M != 0 0 && IR_D[26:22] == IR_M[26:22]);
+    assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M != 0 && IR_D[26:22] == IR_M[26:22]);
 
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out, A_X_Bp, B_X_Bp;
