@@ -1,22 +1,25 @@
 [*]
 [*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
-[*] Wed Mar 22 16:31:17 2023
+[*] Wed Mar 22 19:40:09 2023
 [*]
 [dumpfile] "/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/ECE 350/Processor/CP-4-Processor/Test Files/Output Files/5_sort.vcd"
-[dumpfile_mtime] "Wed Mar 22 16:30:28 2023"
-[dumpfile_size] 4569764
+[dumpfile_mtime] "Wed Mar 22 19:37:20 2023"
+[dumpfile_size] 4720602
 [savefile] "/Users/lukeredmore/Library/CloudStorage/OneDrive-DukeUniversity/ECE 350/Processor/sortvcd.gtkw"
-[timestart] 7528300
+[timestart] 2646700
 [size] 1680 1050
 [pos] -1 -1
-*-17.000000 7895900 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.000000 2827200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] Wrapper_tb.
 [treeopen] Wrapper_tb.CPU.
+[treeopen] Wrapper_tb.CPU.Bypasser.
+[treeopen] Wrapper_tb.RegisterFile.
+[treeopen] Wrapper_tb.RegisterFile.loop1[12].
 [treeopen] Wrapper_tb.RegisterFile.loop1[31].
 [sst_width] 193
-[signals_width] 495
+[signals_width] 340
 [sst_expanded] 1
-[sst_vpaned_height] 325
+[sst_vpaned_height] 634
 @28
 Wrapper_tb.clock
 @24
@@ -26,30 +29,29 @@ Wrapper_tb.CPU.PC[31:0]
 Wrapper_tb.CPU.q_imem[31:0]
 Wrapper_tb.CPU.IR_D[31:0]
 Wrapper_tb.CPU.IR_X[31:0]
-@23
 Wrapper_tb.CPU.IR_M[31:0]
-@22
 Wrapper_tb.CPU.IR_W[31:0]
 @24
 Wrapper_tb.CPU.data_readRegA[31:0]
 Wrapper_tb.CPU.data_readRegB[31:0]
 Wrapper_tb.CPU.PC_in[31:0]
 Wrapper_tb.CPU.PC_in_bp[31:0]
-@c00200
+@800200
 -ALU
 @22
 Wrapper_tb.CPU.ALU_out[31:0]
 @28
 Wrapper_tb.CPU.alu_is_not_equal
-@22
+@420
 Wrapper_tb.CPU.A_X[31:0]
 Wrapper_tb.CPU.B_X[31:0]
 Wrapper_tb.CPU.A_X_Bp[31:0]
 Wrapper_tb.CPU.B_X_Bp[31:0]
+@22
 Wrapper_tb.CPU.ALU.data_operandA[31:0]
 Wrapper_tb.CPU.ALU.data_operandB[31:0]
 Wrapper_tb.CPU.ALU.ctrl_ALUopcode[4:0]
-@1401200
+@1000200
 -ALU
 @28
 Wrapper_tb.CPU.shouldBranch
@@ -77,5 +79,19 @@ Wrapper_tb.CPU.Bypasser.M_dep_2[4:0]
 @28
 Wrapper_tb.CPU.wren
 Wrapper_tb.CPU.ctrlD_PCinToRegFileOut
+@22
+Wrapper_tb.RegisterFile.loop1[12].register.data_out[31:0]
+Wrapper_tb.CPU.Bypasser.DX_out_B[31:0]
+@24
+Wrapper_tb.CPU.Bypasser.M_O[31:0]
+@22
+Wrapper_tb.CPU.Bypasser.Regfile_in[31:0]
+Wrapper_tb.CPU.Bypasser.X_B[31:0]
+@24
+Wrapper_tb.CPU.Bypasser.X_dep_2[4:0]
+@22
+Wrapper_tb.CPU.Bypasser.X_dep_1[4:0]
+@29
+Wrapper_tb.CPU.loadOutputToALUInput
 [pattern_trace] 1
 [pattern_trace] 0

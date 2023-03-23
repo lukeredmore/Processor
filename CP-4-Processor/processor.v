@@ -90,9 +90,6 @@ module processor(
         .Cin(1'b0)
     );
 
-    // for testing only
-    instruction_decoder QIMEMDECODER(.instruction(q_imem));
-
     // FD Latch
     wire [31:0] IR_D, PC_D;
     wire ctrlD_FetchRdInsteadOfRt, ctrlD_insertNopInF, ctrlD_readR30, shouldBEX;
@@ -115,10 +112,8 @@ module processor(
     assign ctrl_readRegB = ctrlD_FetchRdInsteadOfRt ? IR_D[26:22] : IR_D[16:12]; // $rd || $rt
     assign shouldBEX = ctrlD_readR30 && data_readRegA != 0;
 
-    wire RdBeingWrittenToAhead, RtBeingWrittenToAhead, RsBeingWrittenToAhead, loadOutputToALUInput;
-    assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M > 0 && IR_D[26:22] == IR_M[26:22]);
-    assign RtBeingWrittenToAhead = (IR_X > 0 && IR_D[16:12] == IR_X[26:22]) || (IR_M > 0 && IR_D[16:12] == IR_M[26:22]);
-    assign RsBeingWrittenToAhead = (IR_X > 0 && IR_D[21:17] == IR_X[26:22]) || (IR_M > 0 && IR_D[21:17] == IR_M[26:22]);
+    wire RdBeingWrittenToAhead, loadOutputToALUInput;
+    assign RdBeingWrittenToAhead = (IR_X > 0 && IR_D[26:22] == IR_X[26:22]) || (IR_M != 0 0 && IR_D[26:22] == IR_M[26:22]);
 
     // DX Latch
     wire [31:0] A_X, B_X, IR_X, PC_X, ALU_out, A_X_Bp, B_X_Bp;
@@ -165,21 +160,23 @@ module processor(
         .isNotEqual(alu_is_not_equal),
         .isLessThan(alu_is_less_than)
     );
-    wire temp_ready, temp_exception;
-    wire [31:0] temp_result;
+    wire muldiv_ready, muldiv_exception;
+    wire [31:0] muldiv_result;
     multdiv Multiplier(
+        // In
         .data_operandA(A_X_Bp), 
         .data_operandB(B_X_Bp),
         .ctrl_MULT(ctrlX_startMult), 
         .ctrl_DIV(ctrlX_startDiv), 
 	    .clock(clock),
-        .data_resultRDY(temp_ready),
-        .data_exception(temp_exception),
-        .data_result(temp_result)
+        // Out
+        .data_resultRDY(muldiv_ready),
+        .data_exception(muldiv_exception),
+        .data_result(muldiv_result)
     );
-    wire [31:0] P_PW, IR_PW, mul_div_exception_value;
+    wire [31:0] P_PW, IR_PW, muldiv_exception_value;
     wire ctrlPW_RegInToPOut, ctrlPW_RegfileWe, multdiv_operating;
-    assign mul_div_exception_value = IR_PW[6:2] == 6 & IR_PW[31:27] == 0 //mult
+    assign muldiv_exception_value = IR_PW[6:2] == 6 & IR_PW[31:27] == 0 //mult
         ? 4
         : IR_PW[6:2] == 7 & IR_PW[31:27] == 0 //div
             ? 5
@@ -193,8 +190,8 @@ module processor(
         .isOperating(multdiv_operating),
         // In
         .IR_in(IR_X),
-        .P_in(temp_result),
-        .dataReady(temp_ready),
+        .P_in(muldiv_result),
+        .dataReady(muldiv_ready),
         .clock(clock),
         .reset(reset)
     );
@@ -257,22 +254,23 @@ module processor(
         ? {5'b11110} 
         : ctrlW_WriteToR31 
             ? {5'b11111} 
-            : (ctrlPW_RegInToPOut && temp_ready 
-                ? temp_exception 
+            : (ctrlPW_RegInToPOut && muldiv_ready 
+                ? muldiv_exception 
                     ? {5'b11110} 
                     : IR_PW[26:22] 
                 : IR_W[26:22]);
     assign data_writeReg = ctrlW_WriteToR30 
         ? IR_W[26:0] 
-        : ctrlPW_RegInToPOut && temp_ready 
-            ? temp_exception 
-                ? mul_div_exception_value 
+        : ctrlPW_RegInToPOut && muldiv_ready 
+            ? muldiv_exception 
+                ? muldiv_exception_value 
                 : P_PW 
             : (ctrlW_RegInToMemOut ? D_W : O_W);
     assign ctrl_writeEnable = ctrlW_RegfileWe | ctrlPW_RegfileWe;
 
     wire [31:0] B_M_Bp;
     bypass Bypasser(
+        // In
         .IR_X(IR_X),
         .IR_M(IR_M),
         .IR_W(IR_W),
@@ -281,6 +279,7 @@ module processor(
         .M_B(B_M),
         .X_A(A_X),
         .X_B(B_X),
+        // Out
         .DX_out_A(A_X_Bp),
         .DX_out_B(B_X_Bp),
         .XM_out_B(B_M_Bp)
